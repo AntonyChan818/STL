@@ -7,3 +7,5 @@
 5. 配接器（adapter）: 修饰容器或仿函数或迭代器接口的东西。如queue和stack。
 6. 配置器（allocators）：负责空间配置和管理。实现了动态空间配置、空间管理和空间释放的class template。
 ![](https://raw.githubusercontent.com/AntonyChan818/STL/master/image/img1_1.png)
+
+
