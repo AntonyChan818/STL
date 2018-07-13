@@ -6,4 +6,4 @@
 4. 仿函数（functors）：行为类似函数，可以作为算法的某种策略，是一种重载了operator()的class或class template，函数指针是一种。
 5. 配接器（adapter）: 修饰容器或仿函数或迭代器接口的东西。如queue和stack。
 6. 配置器（allocators）：负责空间配置和管理。实现了动态空间配置、空间管理和空间释放的class template。
-
+![]()
