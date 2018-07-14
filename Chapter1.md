@@ -9,3 +9,18 @@
 ![](https://raw.githubusercontent.com/AntonyChan818/STL/master/image/img1_1.png)
 
 
+## **仿函数**
+如果对某个class进行operator()重载，它就称为一个仿函数。例如：
+//成为一个仿函数
+template<class T> struct plus{
+  T operator()(const T& x, const T& y) const{ return x+y; }  
+};
+int main(){
+  //产生仿函数对象
+  plus<int> plusobj;
+  cout<<plusobj(3,5)<<endl;
+  //产生一个临时的仿函数对象（第一个括号），调用（第二个括号）
+  cout<<plus<int>()(43,50)<<endl;
+  
+}
+
