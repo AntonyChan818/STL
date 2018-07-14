@@ -10,7 +10,8 @@
 
 
 ## **仿函数**
-如果对某个class进行operator()重载，它就称为一个仿函数。例如：
+如果对某个class进行operator()重载，它就称为一个仿函数。例如：  
+```
 //成为一个仿函数
 template<class T> struct plus{
   T operator()(const T& x, const T& y) const{ return x+y; }  
@@ -23,4 +24,4 @@ int main(){
   cout<<plus<int>()(43,50)<<endl;
   
 }
-
+```
