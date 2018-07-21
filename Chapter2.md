@@ -49,3 +49,9 @@ inline void destroy(T* pointer) {
 对象构造前要进行空间配置，对象析构后要进行空间释放，由<stl_alloc.h>负责：  
 - 向system heap要求空间
 - 考虑多线程的状态
+- 考虑内存不足的应变措施
+- 考虑过多小型区块可能造成的内存碎片问题  
+
+C++内存配置的基本操作是 ```::operator new()``` ，内存释放的基本操作是 ```::operator delete()```， 这两个全局函数相当于C的```malloc(), free()```函数。SGI正是以```malloc(), free()```完成内存的配置和释放。  
+
+
