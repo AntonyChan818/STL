@@ -66,6 +66,36 @@ typedef __malloc_alloc_template<0> malloc_alloc;
 typedef malloc_alloc alloc; // alloc为第一级配置器
 #else
 typedef __default_alloc_template<__NODE_ALLOCATOR_THREADS, 0> alloc;
+```  
+而SGI还为这些配置器包装一个专门的接口：  
 ```
-
-
+template<class T, class Alloc>
+class simple_alloc{
+public:
+  static T *allocate(size_t n){
+    return 0 == n? 0 : (T*)Alloc::allocate(n*sizeof(T));
+  }
+  static T *allocate(void){
+    return (T*) Alloc::allocate(sizeof(T));
+  }
+  static void deallocate(T *p, size_t n){
+    if (0 != n ) Alloc::deallocate(p, n*sizeof(T));
+  }
+  static void deallocate(T *p){
+    Alloc::deallocate(p, sizeof(T));
+  }
+};
+```  
+STL的所有容器都使用这个simple_alloc接口：
+举例子：
+```
+template <class T, class Alloc = alloc>
+class vector{
+protected:
+  typedef simple_alloc<value_type, Alloc> data_allocator;
+  void deallocate(){
+    if(...)
+      data_allocator::deallocate(start, end_of_storage - start);
+  
+  }
+};
