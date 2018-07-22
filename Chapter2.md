@@ -56,6 +56,16 @@ C++内存配置的基本操作是 ```::operator new()``` ，内存释放的基�
 这两个全局函数相当于C的```malloc(), free()```函数。SGI STL正是以```malloc(), free()```完成内存的配置和释放。考虑到内存破碎的问题，SGI设计了双层级配置器：
 - 第一级配置器直接使用```malloc(), free()```
 - 第二级配置器视情况采用不同的策略：
-  - 当配置区块大于
+  - 当配置区块大于128bytes时，调用第一级配置器；
+  - 当配置区块小于128bytes时，为了降低负担，采用memory pool整理方式。  
+
+使用哪一种配置器取决于预处理命令__USE_MALLOC:
+```
+#ifdef __USE_MALLOC
+typedef __malloc_alloc_template<0> malloc_alloc;
+typedef malloc_alloc alloc; // alloc为第一级配置器
+#else
+typedef __default_alloc_template<__NODE_ALLOCATOR_THREADS, 0> alloc;
+```
 
 
