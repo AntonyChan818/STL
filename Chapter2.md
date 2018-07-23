@@ -96,6 +96,13 @@ protected:
   void deallocate(){
     if(...)
       data_allocator::deallocate(start, end_of_storage - start);
-  
   }
 };
+```  
+
+一二级配置器的关系和接口包装运用方式如图：  
+![](https://github.com/AntonyChan818/STL/blob/master/image/img2_3.png)  
+
+**2.2.5 第一级配置器__malloc_alloc_template剖析**  
+
+
