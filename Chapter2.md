@@ -137,6 +137,14 @@ private:
        result = oom_realloc(p, new_sz);
      return result;
    }
+   
+   //set_malloc_handle是一个函数，函数参数为void(*f)()这个参数是一个函数指针，参数为空，返回值也为空； 函数名前有*,
+   //所以返回一个指针；这个指针也有参数，因此指针指向一个函数，这个函数参数为空，返回类型为void。
+   static void (* set_malloc_handle(void (*f)()))(){
+     void (* old)() = _malloc_alloc_oom_handler;
+     __malloc_alloc_oom_handler = f;
+     return(old);
+   }
 }
 
 ```  
@@ -150,4 +158,22 @@ F* f2(int);  //返回函数指针。
 int (*f1(int)) (int*, int);
 //f1有形参列表，是一个函数;前面有一个*,所以f1返回一个指针；进一步观察，指针类型本身也包含形参列表，|
 //因此指针指向函数，该函数(就是指针指向的函数)的返回类型为int.
+```  
+第一级配置器不能直接使用C++ new-handler的机制，因为并非使用::operator new来配置内存。因此需要仿真一个类似的set_malloc_handler()来解决内存不足时候的操作。  
+
+**2.2.6 第二级配置器 __default_alloc_template**  
+第二级配置器添加机制避免太多小额区块造成内存的碎片和overhead，overhead多出来的空间用来管理内存，但区块越小，overhead占的比例就越大。
+![](https://github.com/AntonyChan818/STL/blob/master/image/img_2.2.6.png)  
+第二级配置器的做法：  
+- 如果区块>128bytes，就移交第一级配置器处理  
+- 如果区块<128bytes，用内存池(memory pool/sub-allocation)管理：每次配置一大块内存，并维护对应之自由链表(free-list)。下次如果再有相同大小的内存需求，就直接从free-lists中取出。如果释放小额区块，就由配置器回收到free-lists中。第二级配置器会主动将任何小额区块的内存需求量上调至8的倍数并维护16个free-lists，各自管理大小分别为8,16,24,32,40,48,56,64,72,80,88，96,104,112,120,128bytes的小额区块。  
+free-lists的节点结构：  
+```
+unioin obj{
+  union obj *free_list_link;
+  char client_data[1];
+}
+```  
+![](https://github.com/AntonyChan818/STL/blob/master/image/img_2.2.6_2.png)  
+
 
