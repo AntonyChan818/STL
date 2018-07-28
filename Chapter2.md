@@ -104,5 +104,40 @@ protected:
 ![](https://github.com/AntonyChan818/STL/blob/master/image/img2_3.png)  
 
 **2.2.5 第一级配置器__malloc_alloc_template剖析**  
+```
+template<int, inst>
+class __malloc_alloc_template{
+private:
+  //空指针和void*类型指针
+  //空指针：#define NULL ((void*)0)， NULL实际上是((void*)0)， void*类型是用来存放地址的，所以0为地址，而内存分配中，较小的地址
+  //        是不用来存放数据也不允许程序访问，所以指针指向它，就是这个指针不能操作它指向的较小的地址。
+  //void*：这个类型的指针指向了存放数据的地址，只是改地址存放的数据的数据类型暂时不知道。强转来存放我们想存放的类型：
+  //        char* str = (char*)malloc(sizeof(char*)13);
+  
+  //out of memory
+  static void *oom_malloc(size_t); 
+  static void *oom_realloc(void*, size_t);
+  static void (* __malloc_alloc_oom_handler)();
+  
+ public:
+   static void *allocate(size_t n){
+     void *result = malloc(n); //第一级配置器直接用malloc()
+     if(0 == result)
+       result = oom_alloc(n);
+       return result;
+   }
+   
+   static void *deallocate(void *p, size_t n){
+     free(p);
+   }
+   
+   static void *reallocate(void *p, size_t old_sz, size_t new_sz){
+     void *result = realloc(p, new_sz);
+     if(0 == result)
+       result = oom_realloc(p, new_sz);
+     return result;
+   }
+}
 
+```
 
